@@ -10,7 +10,12 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.Random;
 
 import io.github.httpssophiasun0515.hackgt2017.HttpService.CVClient;
 import io.github.httpssophiasun0515.hackgt2017.RequestModel.BodyUrl;
@@ -38,21 +43,49 @@ public class ImageActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        String url = "";
+
+        Random r = new Random();
+        int i = r.nextInt(4);
+        ImageView image = (ImageView) findViewById(R.id.imageView2);
+        if (i == 0) {
+            image.setImageResource(R.drawable.landmark1);
+            url = "https://cdntct.com/tct/pic/city/wuhan/attractions/yellow-crane-tower-5.jpg";
+        } else if (i == 1) {
+            image.setImageResource(R.drawable.landmark2);
+            url = "http://media.thisisinsider.com/images/58d919eaf2d0331b008b4bbd-750-562.jpg";
+        } else if (i == 2) {
+            image.setImageResource(R.drawable.landmark3);
+            url = "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Neuschwanstein_Castle_%28532850%29.jpg/1024px-Neuschwanstein_Castle_%28532850%29.jpg";
+        } else if (i == 3) {
+            image.setImageResource(R.drawable.landmark4);
+            url = "http://us.hellomagazine.com/imagenes/travel/2015102127775/cambodia-adventure-holiday/0-137-959/cambodia-temples--a.jpg";
+        }
+        image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent myIntent = new Intent(ImageActivity.this, ImageActivity.class);
+                startActivity(myIntent);
+            }
+        });
+
+        final int identity = i;
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 Intent myIntent = new Intent(ImageActivity.this, CityImage.class);
+                ArrayList<String> info = new ArrayList<String>();
+                info.add(ImageActivity.landMarkName);
+                info.add(cityName);
+                info.add(identity + "");
                 startActivity(myIntent);
                 Bundle b = new Bundle();
-                b.putString("cityName", cityName);
+                b.putStringArrayList("info", info);
                 myIntent.putExtras(b);
                 startActivity(myIntent);
-//                Snackbar.make(view, "Recognize Landmark Info", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-
-
             }
         });
 
@@ -65,7 +98,7 @@ public class ImageActivity extends AppCompatActivity {
 
 //        ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
 //        String textOnClipboard = clipboard.getPrimaryClip().getItemAt(0).getText().toString();
-        BodyUrl bodyUrl = new BodyUrl("https://cdntct.com/tct/pic/city/wuhan/attractions/yellow-crane-tower-5.jpg");
+        BodyUrl bodyUrl = new BodyUrl(url);
         //JSONObject jsonObject = new JSONObject();
         Call<MSCVResponse> mscvResponse = computerVisionClient.getLandmark(subscriptionKey, "application/json", bodyUrl);
 
@@ -86,10 +119,4 @@ public class ImageActivity extends AppCompatActivity {
         });
 
     }
-
-
-
-
-
-
 }
